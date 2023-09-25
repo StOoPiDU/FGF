@@ -68,10 +68,10 @@ class MainActivity : ComponentActivity() {
 
                             val retrofitData = apiService.getData()
 
-                            retrofitData.enqueue(object : Callback<List<todosItem>?> {
+                            retrofitData.enqueue(object : Callback<List<TodosItem>?> {
                                 override fun onResponse(
-                                    call: Call<List<todosItem>?>,
-                                    response: Response<List<todosItem>?>
+                                    call: Call<List<TodosItem>?>,
+                                    response: Response<List<TodosItem>?>
                                 ) {
                                     val rspBody = response.body()
 
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                                     output.value = strData
                                 }
 
-                                override fun onFailure(call: Call<List<todosItem>?>, t: Throwable) {
+                                override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
                                     TODO("Not yet implemented")
                                 }
                             })

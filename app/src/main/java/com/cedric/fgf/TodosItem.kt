@@ -2,7 +2,7 @@ package com.cedric.fgf
 
 import com.google.gson.annotations.SerializedName
 
-data class todosItem(
+data class TodosItem(
 // data > children > 0 > data
 
 //    @SerializedName("id") // This can also be used to build the link -> https://redd.it/{id}
