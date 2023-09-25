@@ -9,5 +9,5 @@ interface RetroFitAPI {
 //    fun getData(): Call <List<todosItem>>
 
     @GET("todos")
-    fun getData(): Call <List<todosItem>>
+    fun getData(): Call <List<TodosItem>>
 }
