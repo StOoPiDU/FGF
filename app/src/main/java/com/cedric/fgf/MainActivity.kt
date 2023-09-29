@@ -32,20 +32,104 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 
-class MainActivity : ComponentActivity() {
+//class MainActivity : ComponentActivity() {
+//
+//    //private val BASE_URL = "https://www.reddit.com/r/FreeGameFindings/new/.json/"
+//    private val BASE_URL = "https://jsonplaceholder.typicode.com/"
+//
+//    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            FGFTheme {
+//                Surface(
+//                    modifier = Modifier.fillMaxSize(),
+//                    color = MaterialTheme.colorScheme.background
+//                ) {
+//                    Scaffold(
+//                        topBar = {
+//                            TopAppBar(backgroundColor = Color.Blue,
+//                                title = {
+//                                    Text(
+//                                        text = "JSON Parsing w/ Andyroid",
+//                                        modifier = Modifier.fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        color = Color.White
+//                                    )
+//                                })
+//                        }
+//                    ) {
+//                        val output = remember { mutableStateOf(StringBuilder()) }
+//                        LaunchedEffect(Unit) {
+//                            val apiService = Retrofit.Builder()
+//                                .addConverterFactory(GsonConverterFactory.create())
+//                                .baseUrl(BASE_URL)
+//                                .build().create(RetroFitAPI::class.java)
+//
+//                            val retrofitData = apiService.getData()
+//
+//                            retrofitData.enqueue(object : Callback<List<TodosItem>?> {
+//                                override fun onResponse(
+//                                    call: Call<List<TodosItem>?>,
+//                                    response: Response<List<TodosItem>?>
+//                                ) {
+//                                    val rspBody = response.body()
+//
+//                                    // Convert this into a LazyColumn with divs and stuff
+//                                    val strData = StringBuilder()
+//                                    for (data in rspBody!!) {
+//                                        strData.append(data.id)
+//                                        strData.append(data.title)
+//                                        strData.append("\n\n")
+//                                    }
+//                                    output.value = strData
+//                                }
+//
+//                                override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
+//                                    TODO("Not yet implemented")
+//                                }
+//                            })
+//                        }
+//                        LazyColumn {
+//                            item {
+//                                displayData(s = output.value)
+//                                Divider()
+//                                Divider()
+//                                Divider()
+//                                Divider()
+//                                Divider() //  Testing purposes, convert list into this structuring instead
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun displayData(s:StringBuilder){
+//    Text(text = s.toString())
+//}
 
-    //private val BASE_URL = "https://www.reddit.com/r/FreeGameFindings/new/.json/"
-    private val BASE_URL = "https://jsonplaceholder.typicode.com/"
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.*
+
+class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             FGFTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
                     Scaffold(
                         topBar = {
                             TopAppBar(backgroundColor = Color.Blue,
@@ -57,49 +141,8 @@ class MainActivity : ComponentActivity() {
                                         color = Color.White
                                     )
                                 })
-                        }
-                    ) {
-                        val output = remember { mutableStateOf(StringBuilder()) }
-                        LaunchedEffect(Unit) {
-                            val apiService = Retrofit.Builder()
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .baseUrl(BASE_URL)
-                                .build().create(RetroFitAPI::class.java)
-
-                            val retrofitData = apiService.getData()
-
-                            retrofitData.enqueue(object : Callback<List<TodosItem>?> {
-                                override fun onResponse(
-                                    call: Call<List<TodosItem>?>,
-                                    response: Response<List<TodosItem>?>
-                                ) {
-                                    val rspBody = response.body()
-
-                                    // Convert this into a LazyColumn with divs and stuff
-                                    val strData = StringBuilder()
-                                    for (data in rspBody!!) {
-                                        strData.append(data.id)
-                                        strData.append(data.title)
-                                        strData.append("\n\n")
-                                    }
-                                    output.value = strData
-                                }
-
-                                override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
-                                    TODO("Not yet implemented")
-                                }
-                            })
-                        }
-                        LazyColumn {
-                            item {
-                                displayData(s = output.value)
-                                Divider()
-                                Divider()
-                                Divider()
-                                Divider()
-                                Divider() //  Testing purposes, convert list into this structuring instead
-                            }
-                        }
+                        }) {
+                        displayListView()
                     }
                 }
             }
@@ -107,7 +150,110 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun displayData(s:StringBuilder){
-    Text(text = s.toString())
+fun getJSONData(postList: MutableList<String>, ctx: Context) {
+    val retrofit = Retrofit.Builder()
+        //.baseUrl("https://www.reddit.com/r/FreeGameFindings/new/.json/")
+        .baseUrl("https://jsonplaceholder.typicode.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
+    val call: Call<List<TodosItem>> = retrofitAPI.getData()
+
+    call!!.enqueue(object : Callback<List<TodosItem>?> {
+        override fun onResponse(
+            call: Call<List<TodosItem>?>,
+            response: Response<List<TodosItem>?>
+        ) {
+            if (response.isSuccessful) {
+                var lst: List<TodosItem> = ArrayList()
+                lst = response.body()!!
+//                var postList = lst
+
+                for (i in lst.indices) {
+                    postList.add(lst[i].title)
+//                    postList.add("${lst[i].id} - ${lst[i].title}")
+//                    postList.add(lst[i].id.toString())
+//                    postList.add(lst[i].userId.toString())
+                }
+            }
+        }
+
+        override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
+            Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT)
+                .show()
+        }
+    })
 }
+
+@Composable
+fun displayListView() {
+    val context = LocalContext.current
+    val postList = remember { mutableStateListOf<String>() }
+    getJSONData(postList, context)
+
+    LazyColumn {
+        items(postList) { item ->
+            Text(item, modifier = Modifier.padding(15.dp))
+            Divider()
+        }
+    }
+}
+
+
+
+
+
+// TRY TO LOGCAT THE BELOW AND FIGURE IT OUT. This was guided and should be what I'm looking for,
+// but it isn't working atm.
+
+//data class ListItem(val title: String, val id: Int)
+//
+//fun getJSONData(ctx: Context): List<ListItem> {
+//    val retrofit = Retrofit.Builder()
+//        .baseUrl("https://jsonplaceholder.typicode.com/")
+//        .addConverterFactory(GsonConverterFactory.create())
+//        .build()
+//
+//    val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
+//    val call: Call<List<TodosItem>> = retrofitAPI.getData()
+//
+//    val result = mutableListOf<ListItem>()
+//
+//    call!!.enqueue(object : Callback<List<TodosItem>?> {
+//        override fun onResponse(
+//            call: Call<List<TodosItem>?>,
+//            response: Response<List<TodosItem>?>
+//        ) {
+//            if (response.isSuccessful) {
+//                var lst: List<TodosItem> = ArrayList()
+//                lst = response.body()!!
+//
+//                for (i in lst.indices) {
+//                    result.add(ListItem(lst[i].title, lst[i].id))
+//                }
+//            }
+//        }
+//
+//        override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
+//            Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT)
+//                .show()
+//        }
+//    })
+//
+//    return result
+//}
+//
+//@Composable
+//fun displayListView() {
+//    val context = LocalContext.current
+//    val itemList = remember { getJSONData(context) }
+//
+//    LazyColumn {
+//        items(itemList) { item ->
+//            Text(item.title, modifier = Modifier.padding(15.dp))
+////            Text(item.id.toString(), modifier = Modifier.padding(15.dp))
+//            Divider()
+//        }
+//    }
+//}
