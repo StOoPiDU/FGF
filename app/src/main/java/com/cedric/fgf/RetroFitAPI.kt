@@ -5,8 +5,8 @@ import retrofit2.http.GET
 
 
 interface RetroFitAPI {
-//    @GET("children")
-//    fun getData(): Call <List<todosItem>>
+//    @GET(".json")
+//    fun getData(): Call <List<Children>>
 
     @GET("todos")
     fun getData(): Call <List<TodosItem>>

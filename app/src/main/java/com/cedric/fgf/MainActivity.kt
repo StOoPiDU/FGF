@@ -113,99 +113,105 @@ import androidx.compose.ui.unit.*
 //}
 
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.*
 
-class MainActivity : ComponentActivity() {
+// ITERATION ONE
 
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            FGFTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
-                    Scaffold(
-                        topBar = {
-                            TopAppBar(backgroundColor = Color.Blue,
-                                title = {
-                                    Text(
-                                        text = "JSON Parsing w/ Andyroid",
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
-                                        color = Color.White
-                                    )
-                                })
-                        }) {
-                        displayListView()
-                    }
-                }
-            }
-        }
-    }
-}
+//class MainActivity : ComponentActivity() {
+//
+//    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            FGFTheme {
+//                Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
+//                    Scaffold(
+//                        topBar = {
+//                            TopAppBar(backgroundColor = Color.Blue,
+//                                title = {
+//                                    Text(
+//                                        text = "JSON Parsing w/ Andyroid",
+//                                        modifier = Modifier.fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        color = Color.White
+//                                    )
+//                                })
+//                        }) {
+//                        displayListView()
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//fun getJSONData(postList: MutableList<String>, ctx: Context) {
+//    val retrofit = Retrofit.Builder()
+//        //.baseUrl("https://www.reddit.com/r/FreeGameFindings/new/.json/")
+//        .baseUrl("https://jsonplaceholder.typicode.com/")
+//        .addConverterFactory(GsonConverterFactory.create())
+//        .build()
+//
+//    val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
+//    val call: Call<List<TodosItem>> = retrofitAPI.getData()
+//
+//    call!!.enqueue(object : Callback<List<TodosItem>?> {
+//        override fun onResponse(
+//            call: Call<List<TodosItem>?>,
+//            response: Response<List<TodosItem>?>
+//        ) {
+//            if (response.isSuccessful) {
+//                var lst: List<TodosItem> = ArrayList()
+//                lst = response.body()!!
+////                var postList = lst
+//
+//                for (i in lst.indices) {
+//                    postList.add(lst[i].title)
+////                    postList.add("${lst[i].id} - ${lst[i].title}")
+////                    postList.add(lst[i].id.toString())
+////                    postList.add(lst[i].userId.toString())
+//                }
+//            }
+//        }
+//
+//        override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
+//            Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT)
+//                .show()
+//        }
+//    })
+//}
+//
+//@Composable
+//fun displayListView() {
+//    val context = LocalContext.current
+//    val postList = remember { mutableStateListOf<String>() }
+//    getJSONData(postList, context)
+//
+//    LazyColumn {
+//        items(postList) { item ->
+//            Text(item, modifier = Modifier.padding(15.dp))
+//            Divider()
+//        }
+//    }
+//}
 
-fun getJSONData(postList: MutableList<String>, ctx: Context) {
-    val retrofit = Retrofit.Builder()
-        //.baseUrl("https://www.reddit.com/r/FreeGameFindings/new/.json/")
-        .baseUrl("https://jsonplaceholder.typicode.com/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
-    val call: Call<List<TodosItem>> = retrofitAPI.getData()
-
-    call!!.enqueue(object : Callback<List<TodosItem>?> {
-        override fun onResponse(
-            call: Call<List<TodosItem>?>,
-            response: Response<List<TodosItem>?>
-        ) {
-            if (response.isSuccessful) {
-                var lst: List<TodosItem> = ArrayList()
-                lst = response.body()!!
-//                var postList = lst
-
-                for (i in lst.indices) {
-                    postList.add(lst[i].title)
-//                    postList.add("${lst[i].id} - ${lst[i].title}")
-//                    postList.add(lst[i].id.toString())
-//                    postList.add(lst[i].userId.toString())
-                }
-            }
-        }
-
-        override fun onFailure(call: Call<List<TodosItem>?>, t: Throwable) {
-            Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT)
-                .show()
-        }
-    })
-}
-
-@Composable
-fun displayListView() {
-    val context = LocalContext.current
-    val postList = remember { mutableStateListOf<String>() }
-    getJSONData(postList, context)
-
-    LazyColumn {
-        items(postList) { item ->
-            Text(item, modifier = Modifier.padding(15.dp))
-            Divider()
-        }
-    }
-}
 
 
 
-
-
-// TRY TO LOGCAT THE BELOW AND FIGURE IT OUT. This was guided and should be what I'm looking for,
-// but it isn't working atm.
+// ITERATION ONE - Two
 
 //data class ListItem(val title: String, val id: Int)
 //
@@ -257,3 +263,110 @@ fun displayListView() {
 //        }
 //    }
 //}
+
+
+
+// ITERATION TWO
+class MainActivity : ComponentActivity() {
+
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            FGFTheme {
+                Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                backgroundColor = Color.Blue,
+                                title = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.fgf_logo_whiteout),
+                                        contentDescription = "logo",
+                                        tint = Color.White,
+                                    )
+                                    Text(
+                                        text = "FreeGameFindings",
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        color = Color.White
+                                    )
+                                }
+                            )
+                        }
+                    ) {
+                        displayListView()
+                    }
+                }
+            }
+        }
+    }
+}
+
+data class ListItem(val title: String, val id: Int)
+
+fun getJSONData(ctx: Context, onResult: (List<ListItem>) -> Unit) {
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://jsonplaceholder.typicode.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
+    val call: Call<List<TodosItem>> = retrofitAPI.getData()
+
+    call.enqueue(object : Callback<List<TodosItem>> {
+        override fun onResponse(
+            call: Call<List<TodosItem>>,
+            response: Response<List<TodosItem>>
+        ) {
+            if (response.isSuccessful) {
+                val lst: List<TodosItem> = response.body()!!
+                val result = lst.map { ListItem(it.title, it.id) }
+                onResult(result)
+            }
+        }
+
+        override fun onFailure(call: Call<List<TodosItem>>, t: Throwable) {
+            Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT)
+                .show()
+        }
+    })
+}
+
+@Composable
+fun displayListView() {
+    val context = LocalContext.current
+    var itemList by remember { mutableStateOf(emptyList<ListItem>()) }
+
+    LaunchedEffect(key1 = true) {
+        getJSONData(context) { items ->
+            itemList = items
+        }
+    }
+
+    LazyColumn {
+        items(itemList) { item ->
+            Row (verticalAlignment = Alignment.CenterVertically){
+                Image(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .background(color = Color.Blue),
+                    painter = painterResource(id = R.drawable.fgf_logo_whiteout),
+                    contentDescription = "test image",
+                    contentScale = ContentScale.FillHeight,)
+                Column(modifier = Modifier
+                    .padding(15.dp)
+                    .fillMaxWidth(),
+//                modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = item.title, textAlign = TextAlign.Center)
+                    Text(text = "AUTHOR")
+                    Text(text = item.id.toString())
+                    Text(text = "URL")
+                }
+            }
+            Divider()
+        }
+    }
+}
