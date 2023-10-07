@@ -18,7 +18,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.StringBuilder
-
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -31,6 +30,16 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+//import androidx.navigation.compose.NavHost
+//import androidx.navigation.compose.composable
+//import androidx.navigation.compose.currentBackStackEntryAsState
+//import androidx.navigation.compose.rememberNavController
 
 //class MainActivity : ComponentActivity() {
 //
@@ -112,21 +121,6 @@ import androidx.compose.ui.unit.*
 //    Text(text = s.toString())
 //}
 
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.*
 
 // ITERATION ONE
 
@@ -337,6 +331,7 @@ fun getJSONData(ctx: Context, onResult: (List<ListItem>) -> Unit) {
 fun displayListView() {
     val context = LocalContext.current
     var itemList by remember { mutableStateOf(emptyList<ListItem>()) }
+//    val navController = rememberNavController()
 
     LaunchedEffect(key1 = true) {
         getJSONData(context) { items ->
@@ -346,7 +341,8 @@ fun displayListView() {
 
     LazyColumn {
         items(itemList) { item ->
-            Row (verticalAlignment = Alignment.CenterVertically){
+            // This clickable seems to be laggy as hell. Hopefully that's just an emulation issue.
+            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{openItemView(item)}){
                 Image(
                     modifier = Modifier
                         .size(100.dp)
@@ -367,6 +363,20 @@ fun displayListView() {
                 }
             }
             Divider()
+        }
+    }
+}
+
+// Not working, needs navigation but the option I was going to use is throwing errors.
+fun openItemView(item: ListItem): @Composable () -> Unit {
+    return {
+        Column(modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = item.title, textAlign = TextAlign.Center)
+            Text(text = "AUTHOR")
+            Text(text = item.id.toString())
+            Text(text = "URL")
         }
     }
 }
