@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.cedric.fgf"
-    compileSdk = 26
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.cedric.fgf"
         minSdk = 24
-        targetSdk = 26
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
