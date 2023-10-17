@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.cedric.fgf"
-    compileSdk = 33
+    compileSdk = 26
 
     defaultConfig {
         applicationId = "com.cedric.fgf"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 26
         versionCode = 1
         versionName = "1.0"
 
@@ -70,6 +70,9 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.compose.material:material:1.4.1")
     implementation("androidx.compose.material3:material3:1.0.1")
+
+//    implementation("androidx.navigation:navigation-compose:2.7.4")
+
 //    implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
 //    implementation("androidx.navigation:navigation-ui-ktx:2.7.4")
 //    implementation("androidx.navigation:navigation-compose:2.4.0-alpha01")

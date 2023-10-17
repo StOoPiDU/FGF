@@ -39,6 +39,7 @@ import androidx.compose.foundation.clickable
 //import androidx.navigation.compose.NavHost
 //import androidx.navigation.compose.composable
 //import androidx.navigation.compose.currentBackStackEntryAsState
+
 //import androidx.navigation.compose.rememberNavController
 
 //class MainActivity : ComponentActivity() {
@@ -331,7 +332,7 @@ fun getJSONData(ctx: Context, onResult: (List<ListItem>) -> Unit) {
 fun displayListView() {
     val context = LocalContext.current
     var itemList by remember { mutableStateOf(emptyList<ListItem>()) }
-//    val navController = rememberNavController()
+    val navController = rememberNavController()
 
     LaunchedEffect(key1 = true) {
         getJSONData(context) { items ->
