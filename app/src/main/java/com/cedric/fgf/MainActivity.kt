@@ -36,11 +36,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 //import androidx.navigation.compose.NavHost
 //import androidx.navigation.compose.composable
 //import androidx.navigation.compose.currentBackStackEntryAsState
 
-//import androidx.navigation.compose.rememberNavController
 
 //class MainActivity : ComponentActivity() {
 //
@@ -328,11 +333,13 @@ fun getJSONData(ctx: Context, onResult: (List<ListItem>) -> Unit) {
     })
 }
 
+
 @Composable
 fun displayListView() {
     val context = LocalContext.current
     var itemList by remember { mutableStateOf(emptyList<ListItem>()) }
-    val navController = rememberNavController()
+//    val navController = rememberNavController()
+    var selectedItem by remember { mutableStateOf<ListItem?>(null) }
 
     LaunchedEffect(key1 = true) {
         getJSONData(context) { items ->
@@ -343,7 +350,7 @@ fun displayListView() {
     LazyColumn {
         items(itemList) { item ->
             // This clickable seems to be laggy as hell. Hopefully that's just an emulation issue.
-            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{openItemView(item)}){
+            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
                 Image(
                     modifier = Modifier
                         .size(100.dp)
@@ -366,18 +373,69 @@ fun displayListView() {
             Divider()
         }
     }
+    selectedItem?.let { item ->
+        ExpandedItemView(item = item, onClose = { selectedItem = null })
+    }
 }
 
 // Not working, needs navigation but the option I was going to use is throwing errors.
-fun openItemView(item: ListItem): @Composable () -> Unit {
-    return {
-        Column(modifier = Modifier.fillMaxSize(),
+//fun openItemView(item: ListItem): @Composable () -> Unit {
+//    return {
+//        Column(modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally) {
+//            Text(text = item.title, textAlign = TextAlign.Center)
+//            Text(text = "AUTHOR")
+//            Text(text = item.id.toString())
+//            Text(text = "URL")
+//        }
+//    }
+//}
+
+@Composable
+fun ExpandedItemView(item: ListItem, onClose: () -> Unit){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            // ^ can try thing like 0.9f for an argument, this is nice though
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = item.title, textAlign = TextAlign.Center)
-            Text(text = "AUTHOR")
-            Text(text = item.id.toString())
-            Text(text = "URL")
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(R.drawable.fgf_logo_whiteout),
+                contentDescription = "My Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .height(100.dp)
+//                    .width(100.dp)
+                    .background(color = Color.Blue)
+            )
+            Text(
+                text = item.title,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+            Text(text = "AUTHOR:" + " include author var", fontStyle = FontStyle.Italic)
+            Text(text = "ID:" + item.id.toString())
+            Row() {
+                //Add padding
+                Text(text = "URL" + "include url var")
+                Text(text = "R_URL" + " include r_url var")
+                // These should be converted into buttons or something to link out.
+            }
+
+            Button(
+                onClick = onClose,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {Text(text = "Close")}
         }
     }
 }
+
