@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,10 +43,18 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object ListView {
 
     data class ListItem(val title: String, val id: Int)
+    // ^ This needs to be removed/changed to TodosItem(?) (which needs to be renamed).
+    // That or this is creating a new thing below, in which case it would need to be adjusted.
 
     fun getJSONData(ctx: Context, onResult: (List<ListItem>) -> Unit) {
         val retrofit = Retrofit.Builder()
@@ -83,6 +93,8 @@ object ListView {
 //    val navController = rememberNavController()
         var selectedItem by remember { mutableStateOf<ListItem?>(null) }
 
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
+
         LaunchedEffect(key1 = true) {
             getJSONData(context) { items ->
                 itemList = items
@@ -91,7 +103,6 @@ object ListView {
 
         LazyColumn {
             items(itemList) { item ->
-                // This clickable seems to be laggy as hell. Hopefully that's just an emulation issue.
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
                     Image(
                         modifier = Modifier
@@ -136,6 +147,9 @@ object ListView {
 
     @Composable
     fun ExpandedItemView(item: ListItem, onClose: () -> Unit){
+
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -172,6 +186,25 @@ object ListView {
                     Text(text = "R_URL" + " include r_url var")
                     // These should be converted into buttons or something to link out.
                 }
+
+                // FIX THIS
+//                LaunchedEffect(Unit){
+//                    launch{
+//                        val result = withContext(Dispatchers.IO){
+//                            db.favouriteItemDao().upsert(item.id.toString(), item.title.toString())
+//                        }
+//                    }
+//                }
+
+//                IconButton(
+//                    onClick = TODO(),
+//                    modifier = Modifier.align(Alignment.CenterHorizontally)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.Favorite,
+//                        contentDescription = "Favorite"
+//                    )
+//                }
 
                 Button(
                     onClick = onClose,
