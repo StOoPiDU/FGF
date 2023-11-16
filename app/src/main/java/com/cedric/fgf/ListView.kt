@@ -41,54 +41,74 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import android.util.Log
+import androidx.core.text.HtmlCompat
 
 object ListView {
 
-    data class ListItem(val title: String, val id: Int)
+    data class PostItem(
+        val title: String,
+        val author: String,
+        val url: String,
+        val id: String
+    )
 
-    fun getJSONData(ctx: Context, onResult: (List<ListItem>) -> Unit) {
+    fun getJSONData(ctx: Context, onResult: (List<PostItem>) -> Unit) {
         val retrofit = Retrofit.Builder()
-//            .baseUrl("https://www.reddit.com/r/FreeGameFindings/new/.json/")
-            .baseUrl("https://jsonplaceholder.typicode.com/")
+            .baseUrl("https://www.reddit.com/r/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
-        val call: Call<List<TodosItem>> = retrofitAPI.getData()
+        val call: Call<FGFData> = retrofitAPI.getData()
 
-        call.enqueue(object : Callback<List<TodosItem>> {
-            override fun onResponse(
-                call: Call<List<TodosItem>>,
-                response: Response<List<TodosItem>>
-            ) {
+        call.enqueue(object : Callback<FGFData> {
+            override fun onResponse(call: Call<FGFData>, response: Response<FGFData>) {
                 if (response.isSuccessful) {
-                    val lst: List<TodosItem> = response.body()!!
-                    val result = lst.map { ListItem(it.title, it.id) }
-                    onResult(result)
+                    Toast.makeText(ctx, "Data Loaded", Toast.LENGTH_SHORT).show()
+                    val fgfData = response.body()
+                    fgfData?.let {
+                        val result = it.data.children.map { child ->
+                            PostItem(
+                                title = HtmlCompat.fromHtml(child.data.title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
+                                author = child.data.author,
+                                url = child.data.url,
+                                id = child.data.id
+                            )
+                        }
+                        onResult(result)
+                    }
                 }
             }
 
-            override fun onFailure(call: Call<List<TodosItem>>, t: Throwable) {
-                Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT)
-                    .show()
+            override fun onFailure(call: Call<FGFData>, t: Throwable) {
+                Log.e("ListView", "Failed to get data", t)
+                Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
+    fun shortenContent(content: String): String {
+        // Implement your URL shortening logic here
+        // For simplicity, let's assume a maximum display length of 20 characters
+        return if (content.length > 30) {
+            content.substring(0, 30) + "..."
+        } else {
+            content
+        }
+    }
 
     @Composable
     fun DisplayListView() {
         val context = LocalContext.current
-        var itemList by remember { mutableStateOf(emptyList<ListItem>()) }
-//    val navController = rememberNavController()
-        var selectedItem by remember { mutableStateOf<ListItem?>(null) }
+        var itemList by remember { mutableStateOf(emptyList<PostItem>()) }
+        var selectedItem by remember { mutableStateOf<PostItem?>(null) }
 
         LaunchedEffect(key1 = true) {
             getJSONData(context) { items ->
                 itemList = items
             }
         }
-
         LazyColumn {
             items(itemList) { item ->
                 // This clickable seems to be laggy as hell. Hopefully that's just an emulation issue.
@@ -106,10 +126,9 @@ object ListView {
 //                modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = item.title, textAlign = TextAlign.Center)
-                        Text(text = "AUTHOR")
-                        Text(text = item.id.toString())
-                        Text(text = "URL")
+                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center)
+                        Text(text = shortenContent(item.author))
+                        Text(text = shortenContent(item.url))
                     }
                 }
                 Divider()
@@ -120,22 +139,8 @@ object ListView {
         }
     }
 
-// Not working, needs navigation but the option I was going to use is throwing errors.
-//fun openItemView(item: ListItem): @Composable () -> Unit {
-//    return {
-//        Column(modifier = Modifier.fillMaxSize(),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally) {
-//            Text(text = item.title, textAlign = TextAlign.Center)
-//            Text(text = "AUTHOR")
-//            Text(text = item.id.toString())
-//            Text(text = "URL")
-//        }
-//    }
-//}
-
     @Composable
-    fun ExpandedItemView(item: ListItem, onClose: () -> Unit){
+    fun ExpandedItemView(item: PostItem, onClose: () -> Unit) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -154,8 +159,6 @@ object ListView {
                     contentDescription = "My Image",
                     modifier = Modifier
                         .fillMaxWidth()
-//                    .height(100.dp)
-//                    .width(100.dp)
                         .background(color = Color.Blue)
                 )
                 Text(
@@ -164,12 +167,12 @@ object ListView {
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-                Text(text = "AUTHOR:" + " include author var", fontStyle = FontStyle.Italic)
-                Text(text = "ID:" + item.id.toString())
+                Text(text = "AUTHOR:" + " ${shortenContent(item.author)}", fontStyle = FontStyle.Italic)
                 Row() {
                     //Add padding
-                    Text(text = "URL" + "include url var")
-                    Text(text = "R_URL" + " include r_url var")
+                    Text(text = "URL:" + "${shortenContent(item.url)}")
+                    Text(text = "ID:" + "${shortenContent(item.id)}")
+//                    Text(text = "R_URL:" + "I have no idea what this is cedric")
                     // These should be converted into buttons or something to link out.
                 }
 

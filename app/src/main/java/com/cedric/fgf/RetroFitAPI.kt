@@ -5,9 +5,6 @@ import retrofit2.http.GET
 
 
 interface RetroFitAPI {
-//    @GET(".json")
-//    fun getData(): Call <List<Children>>
-
-    @GET("todos")
-    fun getData(): Call <List<TodosItem>>
+    @GET("FreeGameFindings/new/.json")
+    fun getData(): Call<FGFData>
 }
