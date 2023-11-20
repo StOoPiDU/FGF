@@ -45,6 +45,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -146,21 +147,10 @@ object ListView {
 //}
 
     @Composable
-    fun AddItem(item: ListItem): Unit{
-        val db = FavouritesDatabase.getInstance(LocalContext.current)
-        LaunchedEffect(Unit){
-            launch{
-                val result = withContext(Dispatchers.IO){
-                    db.favouriteItemDao().upsert(FavouriteItem(item.id,item.title) )
-                }
-            }
-        }
-    }
-
-    @Composable
     fun ExpandedItemView(item: ListItem, onClose: () -> Unit){
 
         val db = FavouritesDatabase.getInstance(LocalContext.current)
+        val coroutine = rememberCoroutineScope()
 
 
         Card(
@@ -202,7 +192,13 @@ object ListView {
 
 
                 IconButton(
-                    onClick = {AddItem(item)}, // PROBLEM HERE
+                    onClick = { // Thanks Foo <3
+                        coroutine.launch{
+                                withContext(Dispatchers.IO){
+                                    db.favouriteItemDao().upsert(FavouriteItem(item.id,item.title) )
+                                }
+                            }
+                        },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Icon(
