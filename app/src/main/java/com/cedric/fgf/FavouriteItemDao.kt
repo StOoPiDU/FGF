@@ -8,6 +8,7 @@ import androidx.room.Upsert
 @Dao
 interface FavouriteItemDao {
     @Upsert
+//    suspend fun upsert(item: FavouriteItem)
     suspend fun upsert(item: FavouriteItem)
 
     @Delete

@@ -34,7 +34,7 @@ object Favourites {
 //        }
 
         val db = FavouritesDatabase.getInstance(LocalContext.current)
-        val temp:FavouriteItem = FavouriteItem(1,"title")
+        val temp:FavouriteItem = FavouriteItem(1,"title") // Test Data
         LaunchedEffect(Unit){
             launch{
                 val result = withContext(Dispatchers.IO){

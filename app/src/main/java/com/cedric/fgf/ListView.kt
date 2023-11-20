@@ -146,9 +146,22 @@ object ListView {
 //}
 
     @Composable
+    fun AddItem(item: ListItem): Unit{
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
+        LaunchedEffect(Unit){
+            launch{
+                val result = withContext(Dispatchers.IO){
+                    db.favouriteItemDao().upsert(FavouriteItem(item.id,item.title) )
+                }
+            }
+        }
+    }
+
+    @Composable
     fun ExpandedItemView(item: ListItem, onClose: () -> Unit){
 
         val db = FavouritesDatabase.getInstance(LocalContext.current)
+
 
         Card(
             modifier = Modifier
@@ -187,24 +200,16 @@ object ListView {
                     // These should be converted into buttons or something to link out.
                 }
 
-                // FIX THIS
-//                LaunchedEffect(Unit){
-//                    launch{
-//                        val result = withContext(Dispatchers.IO){
-//                            db.favouriteItemDao().upsert(item.id.toString(), item.title.toString())
-//                        }
-//                    }
-//                }
 
-//                IconButton(
-//                    onClick = TODO(),
-//                    modifier = Modifier.align(Alignment.CenterHorizontally)
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Favorite,
-//                        contentDescription = "Favorite"
-//                    )
-//                }
+                IconButton(
+                    onClick = {AddItem(item)}, // PROBLEM HERE
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favorite"
+                    )
+                }
 
                 Button(
                     onClick = onClose,
