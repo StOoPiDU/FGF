@@ -1,6 +1,8 @@
 package com.cedric.fgf
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -109,6 +111,13 @@ object ListView {
         }
     }
 
+//    @Composable
+//    fun openURL(url: String) {
+//        val context = LocalContext.current
+//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+//        context.startActivity(intent)
+//    }
+
     @Composable
     fun DisplayListView() {
         val context = LocalContext.current
@@ -153,6 +162,7 @@ object ListView {
 
     @Composable
     fun ExpandedItemView(item: PostItem, onClose: () -> Unit) {
+        val context = LocalContext.current
         val db = FavouritesDatabase.getInstance(LocalContext.current)
         val coroutine = rememberCoroutineScope()
 
@@ -183,11 +193,17 @@ object ListView {
                     fontSize = 20.sp
                 )
                 Text(text = "/u/" + "${item.author}", fontStyle = FontStyle.Italic)
+
                 Row() {
-                    //Add padding
-//                    Text(text = "URL:" + (item.url))
-//                    Text(text = "R_ID:" + (item.id))
-                    // These should be converted into buttons or something to link out.
+                    Button(
+                        onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://redd.it/" + item.id))
+                            context.startActivity(intent)}, modifier = Modifier.padding(8.dp)
+                    ) { Text(text = "Reddit Link") }
+                    // Add Padding
+                    Button(
+                        onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                                context.startActivity(intent)}, modifier = Modifier.padding(8.dp)
+                    ) { Text(text = "Direct Link") }
                 }
 
                 IconButton(
