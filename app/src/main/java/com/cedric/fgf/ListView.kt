@@ -43,6 +43,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import android.util.Log
 import androidx.core.text.HtmlCompat
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 
 object ListView {
 
@@ -137,8 +146,25 @@ object ListView {
         }
     }
 
+    // Not working, needs navigation but the option I was going to use is throwing errors.
+    //fun openItemView(item: ListItem): @Composable () -> Unit {
+    //    return {
+    //        Column(modifier = Modifier.fillMaxSize(),
+    //            verticalArrangement = Arrangement.Center,
+    //            horizontalAlignment = Alignment.CenterHorizontally) {
+    //            Text(text = item.title, textAlign = TextAlign.Center)
+    //            Text(text = "AUTHOR")
+    //            Text(text = item.id.toString())
+    //            Text(text = "URL")
+    //        }
+    //    }
+    //}
+
     @Composable
     fun ExpandedItemView(item: PostItem, onClose: () -> Unit) {
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
+        val coroutine = rememberCoroutineScope()
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -172,6 +198,24 @@ object ListView {
                     Text(text = "ID:" + "${shortenContent(item.id)}")
 //                    Text(text = "R_URL:" + "I have no idea what this is cedric")
                     // These should be converted into buttons or something to link out.
+                }
+
+                IconButton(
+                    onClick = { // Thanks Foo <3
+                        coroutine.launch{
+                            withContext(Dispatchers.IO){
+                                // TODO: Need to fix the datatype error with item ID, JSON is STRING
+                                // db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title) )
+                                db.favouriteItemDao().upsert(FavouriteItem(999, item.title) )
+                            }
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favorite"
+                    )
                 }
 
                 Button(

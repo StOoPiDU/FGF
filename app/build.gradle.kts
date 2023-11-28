@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.cedric.fgf"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.cedric.fgf"
@@ -78,8 +78,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.2")
 
     // Room DB
-    implementation("androidx.room:room-runtime:2.5.0")
-    implementation("androidx.room:room-ktx:2.5.0")
+    implementation ("androidx.room:room-runtime:2.6.0")
+    implementation ("androidx.room:room-ktx:2.6.0")
+    implementation ("androidx.sqlite:sqlite-framework:2.4.0")
+    implementation ("androidx.sqlite:sqlite-ktx:2.4.0")
     kapt("androidx.room:room-compiler:2.5.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
