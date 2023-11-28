@@ -55,6 +55,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            val db = FavouritesDatabase.getInstance(this)
+
             FGFTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
                     Scaffold(

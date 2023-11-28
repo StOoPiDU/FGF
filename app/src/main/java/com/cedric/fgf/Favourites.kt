@@ -8,6 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object Favourites {
     // Build/rebuild ListView to include only things that have
@@ -19,13 +24,27 @@ object Favourites {
     // something along those lines.
     @Composable
     fun FavouriteScreen() {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Favourite")
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .background(Color.White),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Text(text = "Favourite")
+//        }
+
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
+        val temp:FavouriteItem = FavouriteItem(1,"title") // Test Data
+        LaunchedEffect(Unit){
+            launch{
+                val result = withContext(Dispatchers.IO){
+                    db.favouriteItemDao().upsert(temp)
+                }
+            }
+        }
+//        val favouriteItemDao = db.favouriteItemDao()
+        fun getFavoriteItems(): List<FavouriteItem> {
+            return db.favouriteItemDao().getAll()
         }
     }
 }
