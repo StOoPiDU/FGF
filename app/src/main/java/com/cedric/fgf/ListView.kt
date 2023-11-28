@@ -89,8 +89,6 @@ object ListView {
     }
 
     fun shortenContent(content: String): String {
-        // Implement your URL shortening logic here
-        // For simplicity, let's assume a maximum display length of 20 characters
         return if (content.length > 30) {
             content.substring(0, 30) + "..."
         } else {
