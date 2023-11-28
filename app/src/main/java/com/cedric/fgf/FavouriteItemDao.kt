@@ -8,7 +8,6 @@ import androidx.room.Upsert
 @Dao
 interface FavouriteItemDao {
     @Upsert
-//    suspend fun upsert(item: FavouriteItem)
     suspend fun upsert(item: FavouriteItem)
 
     @Delete
@@ -16,4 +15,7 @@ interface FavouriteItemDao {
 
     @Query("SELECT * FROM favourite_items")
     fun getAll(): List<FavouriteItem>
+
+    @Query("DELETE FROM favourite_items")
+    suspend fun deleteAll()
 }

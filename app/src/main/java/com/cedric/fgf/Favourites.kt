@@ -34,14 +34,14 @@ object Favourites {
 //        }
 
         val db = FavouritesDatabase.getInstance(LocalContext.current)
-        val temp:FavouriteItem = FavouriteItem(1,"title") // Test Data
-        LaunchedEffect(Unit){
-            launch{
-                val result = withContext(Dispatchers.IO){
-                    db.favouriteItemDao().upsert(temp)
-                }
-            }
-        }
+//        val temp:FavouriteItem = FavouriteItem("999","title", "author", "url", "thumbnail") // Test Data
+//        LaunchedEffect(Unit){
+//            launch{
+//                val result = withContext(Dispatchers.IO){
+//                    db.favouriteItemDao().upsert(temp)
+//                }
+//            }
+//        }
 //        val favouriteItemDao = db.favouriteItemDao()
         fun getFavoriteItems(): List<FavouriteItem> {
             return db.favouriteItemDao().getAll()

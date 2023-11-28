@@ -59,7 +59,9 @@ object ListView {
         val title: String,
         val author: String,
         val url: String,
-        val id: String
+        val id: String,
+//        val link_flair_css_class: String,
+        val thumbnail: String
     )
 
     fun getJSONData(ctx: Context, onResult: (List<PostItem>) -> Unit) {
@@ -82,7 +84,9 @@ object ListView {
                                 title = HtmlCompat.fromHtml(child.data.title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
                                 author = child.data.author,
                                 url = child.data.url,
-                                id = child.data.id
+                                id = child.data.id,
+                                thumbnail = child.data.thumbnail
+//                                link_flair_css_class = child.data.link_flair_css_class
                             )
                         }
                         onResult(result)
@@ -98,8 +102,8 @@ object ListView {
     }
 
     fun shortenContent(content: String): String {
-        return if (content.length > 30) {
-            content.substring(0, 30) + "..."
+        return if (content.length > 50) {
+            content.substring(0, 50) + "..."
         } else {
             content
         }
@@ -111,6 +115,8 @@ object ListView {
         var itemList by remember { mutableStateOf(emptyList<PostItem>()) }
         var selectedItem by remember { mutableStateOf<PostItem?>(null) }
 
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
+
         LaunchedEffect(key1 = true) {
             getJSONData(context) { items ->
                 itemList = items
@@ -118,7 +124,6 @@ object ListView {
         }
         LazyColumn {
             items(itemList) { item ->
-                // This clickable seems to be laggy as hell. Hopefully that's just an emulation issue.
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
                     Image(
                         modifier = Modifier
@@ -133,9 +138,9 @@ object ListView {
 //                modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center)
-                        Text(text = shortenContent(item.author))
-                        Text(text = shortenContent(item.url))
+                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+                        Text(text = "/u/" + item.author)
+//                        Text(text = item.url)
                     }
                 }
                 Divider()
@@ -145,20 +150,6 @@ object ListView {
             ExpandedItemView(item = item, onClose = { selectedItem = null })
         }
     }
-
-    // Not working, needs navigation but the option I was going to use is throwing errors.
-    //fun openItemView(item: ListItem): @Composable () -> Unit {
-    //    return {
-    //        Column(modifier = Modifier.fillMaxSize(),
-    //            verticalArrangement = Arrangement.Center,
-    //            horizontalAlignment = Alignment.CenterHorizontally) {
-    //            Text(text = item.title, textAlign = TextAlign.Center)
-    //            Text(text = "AUTHOR")
-    //            Text(text = item.id.toString())
-    //            Text(text = "URL")
-    //        }
-    //    }
-    //}
 
     @Composable
     fun ExpandedItemView(item: PostItem, onClose: () -> Unit) {
@@ -191,12 +182,11 @@ object ListView {
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-                Text(text = "AUTHOR:" + " ${shortenContent(item.author)}", fontStyle = FontStyle.Italic)
+                Text(text = "/u/" + "${item.author}", fontStyle = FontStyle.Italic)
                 Row() {
                     //Add padding
-                    Text(text = "URL:" + "${shortenContent(item.url)}")
-                    Text(text = "ID:" + "${shortenContent(item.id)}")
-//                    Text(text = "R_URL:" + "I have no idea what this is cedric")
+//                    Text(text = "URL:" + (item.url))
+//                    Text(text = "R_ID:" + (item.id))
                     // These should be converted into buttons or something to link out.
                 }
 
@@ -204,9 +194,7 @@ object ListView {
                     onClick = { // Thanks Foo <3
                         coroutine.launch{
                             withContext(Dispatchers.IO){
-                                // TODO: Need to fix the datatype error with item ID, JSON is STRING
-                                // db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title) )
-                                db.favouriteItemDao().upsert(FavouriteItem(999, item.title) )
+                                 db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url) )
                             }
                         }
                     },
