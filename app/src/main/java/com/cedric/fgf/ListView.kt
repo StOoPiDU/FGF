@@ -1,6 +1,8 @@
 package com.cedric.fgf
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,7 +61,9 @@ object ListView {
         val title: String,
         val author: String,
         val url: String,
-        val id: String
+        val id: String,
+//        val link_flair_css_class: String,
+        val thumbnail: String
     )
 
     fun getJSONData(ctx: Context, onResult: (List<PostItem>) -> Unit) {
@@ -82,7 +86,9 @@ object ListView {
                                 title = HtmlCompat.fromHtml(child.data.title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
                                 author = child.data.author,
                                 url = child.data.url,
-                                id = child.data.id
+                                id = child.data.id,
+                                thumbnail = child.data.thumbnail
+//                                link_flair_css_class = child.data.link_flair_css_class
                             )
                         }
                         onResult(result)
@@ -98,18 +104,27 @@ object ListView {
     }
 
     fun shortenContent(content: String): String {
-        return if (content.length > 30) {
-            content.substring(0, 30) + "..."
+        return if (content.length > 50) {
+            content.substring(0, 50) + "..."
         } else {
             content
         }
     }
+
+//    @Composable
+//    fun openURL(url: String) {
+//        val context = LocalContext.current
+//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+//        context.startActivity(intent)
+//    }
 
     @Composable
     fun DisplayListView() {
         val context = LocalContext.current
         var itemList by remember { mutableStateOf(emptyList<PostItem>()) }
         var selectedItem by remember { mutableStateOf<PostItem?>(null) }
+
+        val db = FavouritesDatabase.getInstance(LocalContext.current)
 
         LaunchedEffect(key1 = true) {
             getJSONData(context) { items ->
@@ -118,7 +133,6 @@ object ListView {
         }
         LazyColumn {
             items(itemList) { item ->
-                // This clickable seems to be laggy as hell. Hopefully that's just an emulation issue.
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
                     Image(
                         modifier = Modifier
@@ -133,9 +147,9 @@ object ListView {
 //                modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center)
-                        Text(text = shortenContent(item.author))
-                        Text(text = shortenContent(item.url))
+                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+                        Text(text = "/u/" + item.author)
+//                        Text(text = item.url)
                     }
                 }
                 Divider()
@@ -146,22 +160,9 @@ object ListView {
         }
     }
 
-    // Not working, needs navigation but the option I was going to use is throwing errors.
-    //fun openItemView(item: ListItem): @Composable () -> Unit {
-    //    return {
-    //        Column(modifier = Modifier.fillMaxSize(),
-    //            verticalArrangement = Arrangement.Center,
-    //            horizontalAlignment = Alignment.CenterHorizontally) {
-    //            Text(text = item.title, textAlign = TextAlign.Center)
-    //            Text(text = "AUTHOR")
-    //            Text(text = item.id.toString())
-    //            Text(text = "URL")
-    //        }
-    //    }
-    //}
-
     @Composable
     fun ExpandedItemView(item: PostItem, onClose: () -> Unit) {
+        val context = LocalContext.current
         val db = FavouritesDatabase.getInstance(LocalContext.current)
         val coroutine = rememberCoroutineScope()
 
@@ -191,22 +192,25 @@ object ListView {
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-                Text(text = "AUTHOR:" + " ${shortenContent(item.author)}", fontStyle = FontStyle.Italic)
+                Text(text = "/u/" + "${item.author}", fontStyle = FontStyle.Italic)
+
                 Row() {
-                    //Add padding
-                    Text(text = "URL:" + "${shortenContent(item.url)}")
-                    Text(text = "ID:" + "${shortenContent(item.id)}")
-//                    Text(text = "R_URL:" + "I have no idea what this is cedric")
-                    // These should be converted into buttons or something to link out.
+                    Button(
+                        onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://redd.it/" + item.id))
+                            context.startActivity(intent)}, modifier = Modifier.padding(8.dp)
+                    ) { Text(text = "Reddit Link") }
+                    // Add Padding
+                    Button(
+                        onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                                context.startActivity(intent)}, modifier = Modifier.padding(8.dp)
+                    ) { Text(text = "Direct Link") }
                 }
 
                 IconButton(
                     onClick = { // Thanks Foo <3
                         coroutine.launch{
                             withContext(Dispatchers.IO){
-                                // TODO: Need to fix the datatype error with item ID, JSON is STRING
-                                // db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title) )
-                                db.favouriteItemDao().upsert(FavouriteItem(999, item.title) )
+                                 db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url) )
                             }
                         }
                     },
