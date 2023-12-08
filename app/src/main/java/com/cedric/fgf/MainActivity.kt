@@ -20,12 +20,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.cedric.fgf.ui.theme.FGFTheme
+//import com.cedric.fgf.NotificationHandler
 
 class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        createNotificationChannel()
         setContent {
             val navController = rememberNavController()
             val db = FavouritesDatabase.getInstance(this)
@@ -52,13 +54,13 @@ class MainActivity : ComponentActivity() {
                             )
                         },
                         bottomBar = {
-                            BottomNavigation {
+                            BottomNavigation(backgroundColor = Color.Blue) {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                                 val currentRoute = navBackStackEntry?.destination?.route
 
                                 BottomNavBar.values().forEach { screen ->
                                     BottomNavigationItem(
-                                        icon = { Icon(screen.icon, contentDescription = null, modifier = Modifier.size(32.dp)) },
+                                        icon = { Icon(screen.icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.White) },
                                         selected = currentRoute == screen.route,
                                         onClick = {
                                             navController.navigate(screen.route) {
