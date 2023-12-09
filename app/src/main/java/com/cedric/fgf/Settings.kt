@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +39,9 @@ object Settings {
 
             Text("Welcome to the FGF Mobile Application!")
 
+            // Calling the Notification buttons and the logic from it
+            NotificationHandler().NotificationContent()
+
             // Add confirmation to this
             Button(onClick = {
                 coroutine.launch {
@@ -44,7 +49,8 @@ object Settings {
                         db.favouriteItemDao().deleteAll()
                     }
                 }
-            }) {
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
+            ) {
                 Text("Delete All Favourites")
             }
         }

@@ -19,13 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button // This used to be just material, but I like this more
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -202,11 +203,15 @@ object ListView {
                 Row() {
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://redd.it/" + item.id))
-                            context.startActivity(intent)}, modifier = Modifier.padding(8.dp)
+                            context.startActivity(intent)},
+                        modifier = Modifier.padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
                     ) { Text(text = "Reddit Link") }
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-                                context.startActivity(intent)}, modifier = Modifier.padding(8.dp)
+                                context.startActivity(intent)},
+                        modifier = Modifier.padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
                     ) { Text(text = "Direct Link") }
                 }
 
@@ -266,7 +271,8 @@ object ListView {
 
                 Button(
                     onClick = onClose,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
                 ) { Text(text = "Close") }
             }
         }
