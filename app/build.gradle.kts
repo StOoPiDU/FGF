@@ -89,6 +89,9 @@ dependencies {
     // Coil
     implementation ("io.coil-kt:coil-compose:2.5.0")
 
+    // WorkManager
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+
 
 
 //    implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")

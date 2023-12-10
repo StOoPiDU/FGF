@@ -84,9 +84,9 @@ class NotificationHandler : ComponentActivity() {
     private fun showNotification(context: Context) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
 //            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setSmallIcon(R.drawable.fgf_logo_whiteout) // Get my icon
-            .setContentTitle("Hello world")
-            .setContentText("This is a description")
+            .setSmallIcon(R.drawable.fgf_logo_whiteout)
+            .setContentTitle("New FGF Post Is Live (Test)")
+            .setContentText("[Steam] (Game) StOoPiD Puzzle Game")
             .build()
         val notificationManager = ContextCompat.getSystemService(context, NotificationManager::class.java)
         notificationManager?.notify(1, notification)

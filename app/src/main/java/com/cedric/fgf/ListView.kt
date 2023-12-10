@@ -77,6 +77,8 @@ object ListView {
 
         val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
         val call: Call<FGFData> = retrofitAPI.getData()
+        
+//        val db_li = LatestDatabase.getInstance(ctx)
 
         call.enqueue(object : Callback<FGFData> {
             override fun onResponse(call: Call<FGFData>, response: Response<FGFData>) {
@@ -95,6 +97,15 @@ object ListView {
                             )
                         }
                         onResult(result)
+
+//                        GlobalScope.launch(Dispatchers.IO) {
+//                            // Wiping the DB
+//                            db_li.latestItemDao().deleteAllLatest()
+//                            // Rebuilding the DB with the most recent few items
+//                            result.take(3).forEach { item ->
+//                                db_li.latestItemDao().insert(LatestItem(item.id))
+//                            }
+//                        }
                     }
                 }
             }
