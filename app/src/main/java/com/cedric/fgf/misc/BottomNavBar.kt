@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.misc
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite

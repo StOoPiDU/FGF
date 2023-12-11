@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.misc
 
 import android.app.Application
 import android.app.NotificationChannel

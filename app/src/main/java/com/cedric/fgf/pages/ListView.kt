@@ -1,8 +1,10 @@
-package com.cedric.fgf
+package com.cedric.fgf.pages
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,34 +45,82 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.HtmlCompat
 import coil.compose.rememberAsyncImagePainter
+import com.cedric.fgf.database.FavouriteItem
+import com.cedric.fgf.database.FavouritesDatabase
+import com.cedric.fgf.misc.FGFData
+import com.cedric.fgf.misc.RetroFitAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-
-
-object Favourites {
-//    @Composable
-//    fun FavouriteScreen() {
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .background(Color.White),
-//            contentAlignment = Alignment.Center
-//        ) {
-//            Text(text = "No Favourited Items") // Add If/Switch case for this
-//        }
+// List view object that is called within MainActivity
+object ListView {
 
     // Defining the structure of a post item
-//    data class FavouriteItem(
-//        val title: String,
-//        val author: String,
-//        val url: String,
-//        val id: String,
-////        val link_flair_css_class: String,
-//        val thumbnail: String
-//    )
+    data class PostItem(
+        val title: String,
+        val author: String,
+        val url: String,
+        val id: String,
+//        val link_flair_css_class: String,
+        val thumbnail: String
+    )
+
+    // Getting the JSON data and building the post item
+    fun getJSONData(ctx: Context, onResult: (List<PostItem>) -> Unit) {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://www.reddit.com/r/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
+        val call: Call<FGFData> = retrofitAPI.getData()
+        
+//        val db_li = LatestDatabase.getInstance(ctx)
+
+        call.enqueue(object : Callback<FGFData> {
+            override fun onResponse(call: Call<FGFData>, response: Response<FGFData>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(ctx, "Data Loaded", Toast.LENGTH_SHORT).show()
+                    val fgfData = response.body()
+                    fgfData?.let {
+                        val result = it.data.children.map { child ->
+                            PostItem(
+                                title = HtmlCompat.fromHtml(child.data.title, HtmlCompat.FROM_HTML_MODE_LEGACY).toString(),
+                                author = child.data.author,
+                                url = child.data.url,
+                                id = child.data.id,
+                                thumbnail = child.data.thumbnail
+//                                link_flair_css_class = child.data.link_flair_css_class
+                            )
+                        }
+                        onResult(result)
+
+//                        GlobalScope.launch(Dispatchers.IO) {
+//                            // Wiping the DB
+//                            db_li.latestItemDao().deleteAllLatest()
+//                            // Rebuilding the DB with the most recent few items
+//                            result.take(3).forEach { item ->
+//                                db_li.latestItemDao().insert(LatestItem(item.id))
+//                            }
+//                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FGFData>, t: Throwable) {
+                Log.e("ListView", "Failed to get data", t)
+                Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
     // Shortening the length of a title in list view
     fun shortenContent(content: String): String {
@@ -81,24 +131,20 @@ object Favourites {
         }
     }
 
+    // List view of post items
     @Composable
-    fun DisplayFavouritesView() {
+    fun DisplayListView() {
         val context = LocalContext.current
-        var itemList by remember { mutableStateOf(emptyList<FavouriteItem>()) }
-        var selectedItem by remember { mutableStateOf<FavouriteItem?>(null) }
-
-        val coroutine = rememberCoroutineScope()
+        var itemList by remember { mutableStateOf(emptyList<PostItem>()) }
+        var selectedItem by remember { mutableStateOf<PostItem?>(null) }
 
         val db = FavouritesDatabase.getInstance(LocalContext.current)
 
         LaunchedEffect(key1 = true) {
-            coroutine.launch {
-                withContext(Dispatchers.IO) {
-                    itemList = db.favouriteItemDao().getAll()
-                }
+            getJSONData(context) { items ->
+                itemList = items
             }
         }
-
         LazyColumn {
             items(itemList) { item ->
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
@@ -116,7 +162,7 @@ object Favourites {
 //                modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = Favourites.shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
                         Text(text = "/u/" + item.author)
                     }
                 }
@@ -130,7 +176,7 @@ object Favourites {
 
     // Expandable list view when clicking on a post item
     @Composable
-    fun ExpandedItemView(item: FavouriteItem, onClose: () -> Unit) {
+    fun ExpandedItemView(item: PostItem, onClose: () -> Unit) {
         val context = LocalContext.current
         val db = FavouritesDatabase.getInstance(LocalContext.current)
         val coroutine = rememberCoroutineScope()
@@ -179,7 +225,7 @@ object Favourites {
                     ) { Text(text = "Reddit Link") }
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-                            context.startActivity(intent)},
+                                context.startActivity(intent)},
                         modifier = Modifier.padding(8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
                     ) { Text(text = "Direct Link") }
@@ -216,6 +262,28 @@ object Favourites {
                         tint = if (isItemInDb) Color.Red else Color.Black
                     )
                 }
+
+                // Old Icon
+//                IconButton(
+//                    onClick = { // Thanks Foo <3
+//                        coroutine.launch {
+//                            withContext(Dispatchers.IO) {
+//                                val existingItem = db.favouriteItemDao().getItemById(item.id)
+//                                if (existingItem == null) {
+//                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url))
+//                                } else {
+//                                    db.favouriteItemDao().delete(existingItem)
+//                                }
+//                            }
+//                        }
+//                    },
+//                    modifier = Modifier.align(Alignment.CenterHorizontally)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.Favorite,
+//                        contentDescription = "Favorite"
+//                    )
+//                }
 
                 Button(
                     onClick = onClose,

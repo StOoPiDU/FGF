@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.misc
 
 data class FGFData(
     val `data`: Data,

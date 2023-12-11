@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.misc
 
 import retrofit2.Call
 import retrofit2.http.GET
