@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.misc
 
 //import android.content.Context
 //import androidx.work.Constraints

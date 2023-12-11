@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.database
 
 //import androidx.room.Entity
 //import androidx.room.PrimaryKey

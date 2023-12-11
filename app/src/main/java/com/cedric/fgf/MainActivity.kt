@@ -19,6 +19,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.cedric.fgf.database.FavouritesDatabase
+import com.cedric.fgf.misc.BottomNavBar
+import com.cedric.fgf.pages.Favourites
+import com.cedric.fgf.pages.ListView
+import com.cedric.fgf.pages.Settings
 import com.cedric.fgf.ui.theme.FGFTheme
 //import com.cedric.fgf.NotificationHandler
 

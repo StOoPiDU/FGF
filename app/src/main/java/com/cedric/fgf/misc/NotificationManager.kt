@@ -1,4 +1,4 @@
-package com.cedric.fgf
+package com.cedric.fgf.misc
 
 import android.Manifest
 import android.app.NotificationManager
@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.cedric.fgf.R
 
 class NotificationHandler : ComponentActivity() {
     private val CHANNEL_ID = "fgf_posts"
