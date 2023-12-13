@@ -88,7 +88,6 @@ object ListView {
         call.enqueue(object : Callback<FGFData> {
             override fun onResponse(call: Call<FGFData>, response: Response<FGFData>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(ctx, "Data Loaded", Toast.LENGTH_SHORT).show()
                     val fgfData = response.body()
                     fgfData?.let {
                         val result = it.data.children.map { child ->
