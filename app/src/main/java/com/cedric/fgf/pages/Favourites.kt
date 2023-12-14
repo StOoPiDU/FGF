@@ -2,7 +2,6 @@ package com.cedric.fgf.pages
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,14 +35,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.util.getColumnIndex
 import coil.compose.rememberAsyncImagePainter
+import com.cedric.fgf.R
 import com.cedric.fgf.database.FavouriteItem
 import com.cedric.fgf.database.FavouritesDatabase
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +62,17 @@ object Favourites {
             content.substring(0, 50) + "..."
         } else {
             content
+        }
+    }
+
+    // This function checks for if a thumbnail exists for a post and return the result.
+    // It will return either the thumbnail or the default FGF logo to display.
+    @Composable
+    fun getImage(item: FavouriteItem): Painter {
+        return if (item.thumbnail != "default" && item.thumbnail != "self" && !item.thumbnail.isNullOrEmpty()) {
+            rememberAsyncImagePainter(model = item.thumbnail)
+        } else {
+            painterResource(id = R.drawable.fgf_logo_whiteout)
         }
     }
 
@@ -88,8 +102,7 @@ object Favourites {
                         modifier = Modifier
                             .size(100.dp)
                             .background(color = Color.Blue),
-//                        painter = painterResource(id = R.drawable.fgf_logo_whiteout),
-                        painter = rememberAsyncImagePainter(model = item.thumbnail),
+                        painter = getImage(item),
                         contentDescription = item.title + " thumbnail",
                         contentScale = ContentScale.FillHeight,)
                     Column(modifier = Modifier
@@ -131,18 +144,14 @@ object Favourites {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-//                if (!item.thumbnail.contains(item.id)) { // Poor attempt at adding logic for missing thumbnail imagery
                 Image(
-                    painter = rememberAsyncImagePainter(model = item.thumbnail).also {
-                        Log.d("Painter", "$it")
-                    },
-                    contentDescription = item.title + " thumbnail",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.5f),
-                    contentScale = ContentScale.Fit
-//                        .background(color = Color.Blue)
-                )
+                        .aspectRatio(1.5f)
+                        .background(color = Color.Blue),
+                    painter = getImage(item),
+                    contentDescription = item.title + " thumbnail",
+                    contentScale = ContentScale.Fit)
 //                }
                 Text(
                     text = item.title,

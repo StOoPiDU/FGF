@@ -38,8 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
 import coil.compose.rememberAsyncImagePainter
+import com.cedric.fgf.R
 import com.cedric.fgf.database.FavouriteItem
 import com.cedric.fgf.database.FavouritesDatabase
 import com.cedric.fgf.misc.FGFData
@@ -88,7 +91,6 @@ object ListView {
         call.enqueue(object : Callback<FGFData> {
             override fun onResponse(call: Call<FGFData>, response: Response<FGFData>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(ctx, "Data Loaded", Toast.LENGTH_SHORT).show()
                     val fgfData = response.body()
                     fgfData?.let {
                         val result = it.data.children.map { child ->
@@ -131,6 +133,17 @@ object ListView {
         }
     }
 
+    // This function checks for if a thumbnail exists for a post and return the result.
+    // It will return either the thumbnail or the default FGF logo to display.
+    @Composable
+    fun getImage(item: PostItem): Painter {
+        return if (item.thumbnail != "default" && item.thumbnail != "self" && !item.thumbnail.isNullOrEmpty()) {
+            rememberAsyncImagePainter(model = item.thumbnail)
+        } else {
+            painterResource(id = R.drawable.fgf_logo_whiteout)
+        }
+    }
+
     // List view of post items
     @Composable
     fun DisplayListView() {
@@ -152,8 +165,7 @@ object ListView {
                         modifier = Modifier
                             .size(100.dp)
                             .background(color = Color.Blue),
-//                        painter = painterResource(id = R.drawable.fgf_logo_whiteout),
-                        painter = rememberAsyncImagePainter(model = item.thumbnail),
+                        painter = getImage(item),
                         contentDescription = item.title + " thumbnail",
                         contentScale = ContentScale.FillHeight,)
                     Column(modifier = Modifier
@@ -195,19 +207,14 @@ object ListView {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-//                if (!item.thumbnail.contains(item.id)) { // Poor attempt at adding logic for missing thumbnail imagery
                 Image(
-                    painter = rememberAsyncImagePainter(model = item.thumbnail).also {
-                        Log.d("Painter", "$it")
-                    },
-                    contentDescription = item.title + " thumbnail",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.5f),
-                    contentScale = ContentScale.Fit
-//                        .background(color = Color.Blue)
-                )
-//                }
+                        .aspectRatio(1.5f)
+                        .background(color = Color.Blue),
+                    painter = getImage(item),
+                    contentDescription = item.title + " thumbnail",
+                    contentScale = ContentScale.Fit)
                 Text(
                     text = item.title,
                     textAlign = TextAlign.Center,
@@ -247,7 +254,7 @@ object ListView {
                                     db.favouriteItemDao().delete(existingItem)
                                     isItemInDb = false
                                 } else {
-                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url))
+                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.url, item.thumbnail))
                                     isItemInDb = true
                                 }
                             }
