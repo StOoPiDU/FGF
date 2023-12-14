@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -132,6 +133,17 @@ object ListView {
         }
     }
 
+    // This function checks for if a thumbnail exists for a post and return the result.
+    // It will return either the thumbnail or the default FGF logo to display.
+    @Composable
+    fun getImage(item: PostItem): Painter {
+        return if (item.thumbnail != "default" && item.thumbnail != "self" && !item.thumbnail.isNullOrEmpty()) {
+            rememberAsyncImagePainter(model = item.thumbnail)
+        } else {
+            painterResource(id = R.drawable.fgf_logo_whiteout)
+        }
+    }
+
     // List view of post items
     @Composable
     fun DisplayListView() {
@@ -149,16 +161,11 @@ object ListView {
         LazyColumn {
             items(itemList) { item ->
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
-                    val painter = if (item.thumbnail != "default" && item.thumbnail != "self" && !item.thumbnail.isNullOrEmpty()) {
-                        rememberAsyncImagePainter(model = item.thumbnail)
-                    } else {
-                        painterResource(id = R.drawable.fgf_logo_whiteout)
-                    }
                     Image(
                         modifier = Modifier
                             .size(100.dp)
                             .background(color = Color.Blue),
-                        painter = painter,
+                        painter = getImage(item),
                         contentDescription = item.title + " thumbnail",
                         contentScale = ContentScale.FillHeight,)
                     Column(modifier = Modifier
@@ -200,17 +207,12 @@ object ListView {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val painter = if (item.thumbnail != "default" && item.thumbnail != "self" && !item.thumbnail.isNullOrEmpty()) {
-                    rememberAsyncImagePainter(model = item.thumbnail)
-                } else {
-                    painterResource(id = R.drawable.fgf_logo_whiteout)
-                }
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1.5f)
                         .background(color = Color.Blue),
-                    painter = painter,
+                    painter = getImage(item),
                     contentDescription = item.title + " thumbnail",
                     contentScale = ContentScale.Fit)
                 Text(
