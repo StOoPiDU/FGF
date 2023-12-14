@@ -38,12 +38,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.cedric.fgf.R
 import com.cedric.fgf.database.FavouriteItem
 import com.cedric.fgf.database.FavouritesDatabase
 import kotlinx.coroutines.Dispatchers
@@ -84,12 +86,16 @@ object Favourites {
         LazyColumn {
             items(itemList) { item ->
                 Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
+                    val painter = if (item.thumbnail != "default" && item.thumbnail != "self" && !item.thumbnail.isNullOrEmpty()) {
+                        rememberAsyncImagePainter(model = item.thumbnail)
+                    } else {
+                        painterResource(id = R.drawable.fgf_logo_whiteout)
+                    }
                     Image(
                         modifier = Modifier
                             .size(100.dp)
                             .background(color = Color.Blue),
-//                        painter = painterResource(id = R.drawable.fgf_logo_whiteout),
-                        painter = rememberAsyncImagePainter(model = item.thumbnail),
+                        painter = painter,
                         contentDescription = item.title + " thumbnail",
                         contentScale = ContentScale.FillHeight,)
                     Column(modifier = Modifier
