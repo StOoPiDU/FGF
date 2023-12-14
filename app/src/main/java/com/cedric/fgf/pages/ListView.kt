@@ -252,7 +252,7 @@ object ListView {
                                     db.favouriteItemDao().delete(existingItem)
                                     isItemInDb = false
                                 } else {
-                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url))
+                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.url, item.thumbnail))
                                     isItemInDb = true
                                 }
                             }
