@@ -44,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.room.util.getColumnIndex
 import coil.compose.rememberAsyncImagePainter
 import com.cedric.fgf.R
 import com.cedric.fgf.database.FavouriteItem
@@ -74,6 +73,13 @@ object Favourites {
         } else {
             painterResource(id = R.drawable.fgf_logo_whiteout)
         }
+    }
+
+    // Separated code to run a check for an image and save a boolean due
+    // assumed bug in android studio. Just nice to isolate too I guess.
+    @Composable
+    fun hasImage(item: FavouriteItem): Boolean {
+        return item.thumbnail == "default" || item.thumbnail == "self" || item.thumbnail.isNullOrEmpty()
     }
 
     // List view of favourited items
@@ -144,15 +150,16 @@ object Favourites {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1.5f)
-                        .background(color = Color.Blue),
-                    painter = getImage(item),
-                    contentDescription = item.title + " thumbnail",
-                    contentScale = ContentScale.Fit)
-//                }
+                if (!hasImage(item)) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.5f),
+//                            .background(color = Color.Blue),
+                        painter = getImage(item),
+                        contentDescription = item.title + " thumbnail",
+                        contentScale = ContentScale.Fit)
+                }
                 Text(
                     text = item.title,
                     textAlign = TextAlign.Center,

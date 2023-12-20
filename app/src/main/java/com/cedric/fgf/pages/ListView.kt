@@ -119,7 +119,7 @@ object ListView {
 
             override fun onFailure(call: Call<FGFData>, t: Throwable) {
                 Log.e("ListView", "Failed to get data", t)
-                Toast.makeText(ctx, "Failed to get data.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, "Failed to get data. Reddit might be down.", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -142,6 +142,13 @@ object ListView {
         } else {
             painterResource(id = R.drawable.fgf_logo_whiteout)
         }
+    }
+
+    // Separated code to run a check for an image and save a boolean due
+    // assumed bug in android studio. Just nice to isolate too I guess.
+    @Composable
+    fun hasImage(item: PostItem): Boolean {
+        return item.thumbnail == "default" || item.thumbnail == "self" || item.thumbnail.isNullOrEmpty()
     }
 
     // List view of post items
@@ -207,14 +214,17 @@ object ListView {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1.5f)
-                        .background(color = Color.Blue),
-                    painter = getImage(item),
-                    contentDescription = item.title + " thumbnail",
-                    contentScale = ContentScale.Fit)
+                if (!hasImage(item)) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.5f),
+//                        .background(color = Color.Blue),
+                        painter = getImage(item),
+                        contentDescription = item.title + " thumbnail",
+                        contentScale = ContentScale.Fit
+                    )
+                }
                 Text(
                     text = item.title,
                     textAlign = TextAlign.Center,
