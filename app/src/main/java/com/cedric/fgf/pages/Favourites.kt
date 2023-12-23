@@ -101,29 +101,63 @@ object Favourites {
             }
         }
 
-        LazyColumn {
-            items(itemList) { item ->
-                Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
-                    Image(
-                        modifier = Modifier
-                            .size(100.dp)
-                            .background(color = Color.Blue),
-                        painter = getImage(item),
-                        contentDescription = item.title + " thumbnail",
-                        contentScale = ContentScale.FillHeight,)
-                    Column(modifier = Modifier
-                        .padding(15.dp)
-                        .fillMaxWidth(),
-//                modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
-                        Text(text = "/u/" + item.author)
+        if (itemList.isNotEmpty()) {
+            LazyColumn {
+                items(itemList) { item ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { selectedItem = item }) {
+                        Image(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(color = Color.Blue),
+                            painter = getImage(item),
+                            contentDescription = item.title + " thumbnail",
+                            contentScale = ContentScale.FillHeight,
+                        )
+                        Column(
+                            modifier = Modifier
+                                .padding(15.dp)
+                                .fillMaxWidth(),
+                            //                modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = shortenContent(item.title),
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(text = "/u/" + item.author)
+                        }
                     }
+                    Divider()
                 }
-                Divider()
             }
-        }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "You currently have not favourited anything.",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = "From the home page, click on an item then click on the heart icon to save a post for later!",
+                    textAlign = TextAlign.Center,
+                )
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorite",
+                    tint = Color.Black
+                )}
+            }
+
         selectedItem?.let { item ->
             ExpandedItemView(item = item, onClose = { selectedItem = null })
         }

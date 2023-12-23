@@ -19,8 +19,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.WorkManager
 import com.cedric.fgf.database.FavouritesDatabase
+import com.cedric.fgf.database.LatestDatabase
 import com.cedric.fgf.misc.BottomNavBar
+import com.cedric.fgf.misc.updateCheckRequest
 import com.cedric.fgf.pages.Favourites
 import com.cedric.fgf.pages.ListView
 import com.cedric.fgf.pages.Settings
@@ -32,11 +35,16 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val workManager = WorkManager.getInstance(this)
+        workManager.enqueue(updateCheckRequest)
+
 //        createNotificationChannel()
+
         setContent {
             val navController = rememberNavController()
             val db = FavouritesDatabase.getInstance(this)
-//            val db_li = LatestDatabase.getInstance(this)
+            val db_li = LatestDatabase.getInstance(this)
 
             FGFTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
@@ -97,8 +105,8 @@ class MainActivity : ComponentActivity() {
                             composable(BottomNavBar.Settings.route) {
                                 Settings.SettingsScreen()
                             }
+                            }
                         }
-                    }
                     }
                 }
             }

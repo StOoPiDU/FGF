@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cedric.fgf.database.FavouritesDatabase
 import com.cedric.fgf.misc.NotificationHandler
@@ -38,8 +39,8 @@ object Settings {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            Text("Welcome to the FGF Mobile Application!")
+            Text("Welcome to the FGF Mobile Application!",
+                textAlign = TextAlign.Center,)
 
             // Calling the Notification buttons and the logic from it
             NotificationHandler().NotificationContent()
