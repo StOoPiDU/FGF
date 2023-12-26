@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +61,7 @@ import com.cedric.fgf.misc.FGFData
 import com.cedric.fgf.misc.RetroFitAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -169,31 +172,74 @@ object ListView {
                 itemList = items
             }
         }
-        LazyColumn {
-            items(itemList) { item ->
-                Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
-                    Image(
-                        modifier = Modifier
-                            .size(100.dp)
-                            .background(color = MaterialTheme.colorScheme.primary),
-                        painter = getImage(item),
-                        contentDescription = item.title + " thumbnail",
-                        contentScale = ContentScale.FillHeight,)
-                    Column(modifier = Modifier
-                        .padding(15.dp)
-                        .fillMaxWidth(),
-//                modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                        Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface)
+
+        if (itemList.isNotEmpty()) {
+            LazyColumn {
+                items(itemList) { item ->
+                    Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
+                        Image(
+                            modifier = Modifier
+                                .size(100.dp)
+                                .background(color = MaterialTheme.colorScheme.primary),
+                            painter = getImage(item),
+                            contentDescription = item.title + " thumbnail",
+                            contentScale = ContentScale.FillHeight,)
+                        Column(modifier = Modifier
+                            .padding(15.dp)
+                            .fillMaxWidth(),
+    //                modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface)
+                        }
                     }
+                    Divider()
                 }
-                Divider()
             }
-        }
-        selectedItem?.let { item ->
-            ExpandedItemView(item = item, onClose = { selectedItem = null })
+            selectedItem?.let { item ->
+                ExpandedItemView(item = item, onClose = { selectedItem = null })
+            }
+
+        } else {
+            var isLoading by remember { mutableStateOf(true) }
+
+            LaunchedEffect(Unit) {
+                delay(5000) // 5 seconds delay
+                isLoading = false
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){ if (isLoading) {
+                Text(
+                    text = "Loading FreeGameFindings data.",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            } else {
+                Text(
+                    text = "No data loaded.",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Reddit might be down at the moment, try again later.",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            }
         }
     }
 
