@@ -5,14 +5,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -32,6 +30,7 @@ import com.cedric.fgf.ui.theme.FGFTheme
 
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,34 +46,36 @@ class MainActivity : ComponentActivity() {
             val db_li = LatestDatabase.getInstance(this)
 
             FGFTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = Color.Blue) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
                     Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                backgroundColor = Color.Blue,
-                                title = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.fgf_logo_whiteout),
-                                        contentDescription = "logo",
-                                        tint = Color.White,
-                                    )
-                                    Text(
-                                        text = "FreeGameFindings",
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
-                                        color = Color.White
-                                    )
-                                }
-                            )
-                        },
+//                        topBar = {
+                        // THIS USED TO BE TopAppBar from Material (1), looked better, can't redo as well. Not needed anyway.
+//                            CenterAlignedTopAppBar(
+//                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
+//                                title = {
+////                                    Icon(
+////                                        painter = painterResource(id = R.drawable.fgf_logo_whiteout),
+////                                        contentDescription = "logo",
+////                                        tint = MaterialTheme.colorScheme.onPrimary,
+////                                        modifier = Modifier.size(50.dp)
+////                                    )
+//                                    Text(
+//                                        text = "FreeGameFindings",
+//                                        modifier = Modifier.fillMaxWidth(),
+//                                        textAlign = TextAlign.Center,
+//                                        color = MaterialTheme.colorScheme.onPrimary
+//                                    )
+//                                }
+//                            )
+//                        },
                         bottomBar = {
-                            BottomNavigation(backgroundColor = Color.Blue) {
+                            BottomNavigation(backgroundColor = MaterialTheme.colorScheme.primary) {
                                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                                 val currentRoute = navBackStackEntry?.destination?.route
 
                                 BottomNavBar.values().forEach { screen ->
                                     BottomNavigationItem(
-                                        icon = { Icon(screen.icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.White) },
+                                        icon = { Icon(screen.icon, contentDescription = null, modifier = Modifier.size(32.dp), tint = MaterialTheme.colorScheme.onPrimary) },
                                         selected = currentRoute == screen.route,
                                         onClick = {
                                             navController.navigate(screen.route) {

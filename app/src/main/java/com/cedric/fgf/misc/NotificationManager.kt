@@ -11,13 +11,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -54,16 +54,16 @@ class NotificationHandler : ComponentActivity() {
         )
         Button(onClick = {
             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)) {
+        }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)) {
             Text(text = "Request Permission")
         }
         Button(onClick = {
             if (hasNotificationPermission) {
                 showTestNotification(context)
             }
-        }, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
+        }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
         ) {
-            Text(text = "Show Notification")
+            Text(text = "Show Test Notification")
         }
 
     }
