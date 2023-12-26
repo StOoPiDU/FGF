@@ -223,7 +223,8 @@ object ListView {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 CircularProgressIndicator(
-                    modifier = Modifier.width(64.dp),
+                    modifier = Modifier.width(64.dp)
+                                        .padding(4.dp),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             } else {

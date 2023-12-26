@@ -88,6 +88,5 @@ val constraints = Constraints.Builder()
 
 val updateCheckRequest = PeriodicWorkRequestBuilder<UpdateCheckWorker>(5, TimeUnit.MINUTES)
     .setConstraints(constraints)
+    .setInitialDelay(30000, TimeUnit.MILLISECONDS)
     .build()
-
-//WorkManager.getInstance(context).enqueueUniquePeriodicWork("UpdateCheck", ExistingPeriodicWorkPolicy.KEEP, updateCheckRequest)
