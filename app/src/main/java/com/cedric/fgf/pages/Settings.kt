@@ -25,8 +25,6 @@ import kotlinx.coroutines.withContext
 object Settings {
     // This might be better called an "About" page.
     // Use this object to describe what FGF is,
-    // explain how to use filters (once implemented),
-    // toggle push notifications (once implemented),
     // and possibly just link to the FGF links ala linktree.
     @Composable
     fun SettingsScreen() {

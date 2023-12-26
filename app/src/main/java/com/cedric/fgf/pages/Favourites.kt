@@ -178,8 +178,8 @@ object Favourites {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
-            // ^ can try something like 0.9f for an argument, this is nice though
+                .fillMaxHeight(),
+            backgroundColor = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier
