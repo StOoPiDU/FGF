@@ -48,6 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.HtmlCompat
@@ -79,7 +80,7 @@ object ListView {
         val author: String,
         val url: String,
         val id: String,
-//        val link_flair_css_class: String,
+        val link_flair_css_class: String?, // This can be null. Might want to do the same elsewhere. \/
         val thumbnail: String
     )
 
@@ -106,8 +107,8 @@ object ListView {
                                 author = child.data.author,
                                 url = child.data.url,
                                 id = child.data.id,
-                                thumbnail = child.data.thumbnail
-//                                link_flair_css_class = child.data.link_flair_css_class
+                                thumbnail = child.data.thumbnail,
+                                link_flair_css_class = child.data.link_flair_css_class
                             )
                         }
                         onResult(result)
@@ -190,9 +191,17 @@ object ListView {
     //                modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface)
+                            Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface,
+                                textDecoration = if (item.link_flair_css_class == "Expired"){TextDecoration.LineThrough} else {null})
+                            Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface,
+                                textDecoration = if (item.link_flair_css_class == "Expired"){TextDecoration.LineThrough} else {null})
                         }
+//                        if (item.link_flair_css_class == "Expired"){
+//                            Box(modifier = Modifier.fillMaxHeight().width(30.dp).rotate(90f)){
+//                                Text("Expired", color = Color.Red,fontWeight = FontWeight.Bold,
+//                                    modifier = Modifier.rotate(90f).padding(8.dp))
+//                            }
+//                        }
                     }
                     Divider()
                 }
@@ -223,8 +232,9 @@ object ListView {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 CircularProgressIndicator(
-                    modifier = Modifier.width(64.dp)
-                                        .padding(4.dp),
+                    modifier = Modifier
+                        .width(64.dp)
+                        .padding(4.dp),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             } else {
