@@ -2,6 +2,7 @@ package com.cedric.fgf.pages
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,6 +53,10 @@ import com.cedric.fgf.database.FavouritesDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 // Favourite view object that is called within MainActivity
@@ -131,6 +136,15 @@ object Favourites {
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface)
+                            if (Build.VERSION.SDK_INT >= 26) {
+                                val instant = Instant.ofEpochSecond(item.created_utc.toLong())
+                                val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
+                                val localTime = localDateTime.format(formatter)
+                                Text(text = "Posted $localTime",
+                                    color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontStyle = FontStyle.Italic
+                                )
+                            }
                         }
                     }
                     Divider()
@@ -207,6 +221,19 @@ object Favourites {
                 )
                 Text(text = "Posted by /u/" + "${item.author}", fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurface)
 
+                if (Build.VERSION.SDK_INT >= 26) {
+                    val instant = Instant.ofEpochSecond(item.created_utc.toLong())
+                    val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
+                    val localTime = localDateTime.format(formatter)
+                    Text(
+                        text = "Posted $localTime",
+                        fontStyle = FontStyle.Italic,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 14.sp
+                    )
+                }
+
                 Row() {
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://redd.it/" + item.id))
@@ -238,7 +265,7 @@ object Favourites {
                                     db.favouriteItemDao().delete(existingItem)
                                     isItemInDb = false
                                 } else {
-                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url))
+                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.thumbnail, item.url, item.created_utc))
                                     isItemInDb = true
                                 }
                             }

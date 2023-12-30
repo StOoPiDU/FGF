@@ -10,6 +10,7 @@ data class FavouriteItem(
     val author: String,
     val url: String,
 //    val link_flair_css_class: String,
-    val thumbnail: String
+    val thumbnail: String,
+    val created_utc: Double
 )
 

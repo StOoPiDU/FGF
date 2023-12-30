@@ -3,6 +3,7 @@ package com.cedric.fgf.pages
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -70,6 +71,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 
 // List view object that is called within MainActivity
 object ListView {
@@ -81,6 +87,7 @@ object ListView {
         val url: String,
         val id: String,
         val link_flair_css_class: String?, // This can be null. Might want to do the same elsewhere. \/
+        val created_utc: Double,
         val thumbnail: String
     )
 
@@ -108,6 +115,7 @@ object ListView {
                                 url = child.data.url,
                                 id = child.data.id,
                                 thumbnail = child.data.thumbnail,
+                                created_utc = child.data.created_utc,
                                 link_flair_css_class = child.data.link_flair_css_class
                             )
                         }
@@ -180,11 +188,12 @@ object ListView {
                     Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable{selectedItem = item}) {
                         Image(
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(110.dp) // Formerly 110.dp
                                 .background(color = MaterialTheme.colorScheme.primary),
                             painter = getImage(item),
                             contentDescription = item.title + " thumbnail",
-                            contentScale = ContentScale.FillHeight,)
+                            contentScale = ContentScale.FillHeight,
+                        )
                         Column(modifier = Modifier
                             .padding(15.dp)
                             .fillMaxWidth(),
@@ -195,6 +204,14 @@ object ListView {
                                 textDecoration = if (item.link_flair_css_class == "Expired"){TextDecoration.LineThrough} else {null})
                             Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface,
                                 textDecoration = if (item.link_flair_css_class == "Expired"){TextDecoration.LineThrough} else {null})
+                            if (Build.VERSION.SDK_INT >= 26) {
+                                val instant = Instant.ofEpochSecond(item.created_utc.toLong())
+                                val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
+                                val localTime = localDateTime.format(formatter)
+                                Text(text = "Posted $localTime",
+                                color = MaterialTheme.colorScheme.onSurface, fontSize = 14.sp, fontStyle = FontStyle.Italic
+                            )}
                         }
 //                        if (item.link_flair_css_class == "Expired"){
 //                            Box(modifier = Modifier.fillMaxHeight().width(30.dp).rotate(90f)){
@@ -295,6 +312,19 @@ object ListView {
                 )
                 Text(text = "Posted by /u/" + "${item.author}", fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurface)
 
+                if (Build.VERSION.SDK_INT >= 26) {
+                    val instant = Instant.ofEpochSecond(item.created_utc.toLong())
+                    val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm a")
+                    val localTime = localDateTime.format(formatter)
+                    Text(
+                        text = "Posted $localTime",
+                        fontStyle = FontStyle.Italic,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 14.sp
+                    )
+                }
+
                 Row() {
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://redd.it/" + item.id))
@@ -326,7 +356,7 @@ object ListView {
                                     db.favouriteItemDao().delete(existingItem)
                                     isItemInDb = false
                                 } else {
-                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.url, item.thumbnail))
+                                    db.favouriteItemDao().upsert(FavouriteItem(item.id, item.title, item.author, item.url, item.thumbnail, item.created_utc))
                                     isItemInDb = true
                                 }
                             }
