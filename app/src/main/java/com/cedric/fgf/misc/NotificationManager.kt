@@ -97,7 +97,7 @@ class NotificationHandler : ComponentActivity() {
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
                 ) {
-                Text("Enable Notifications", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                Text("Toggle Notifications", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.weight(1f)) // Adding the required space to have the switch at the end.
                 Switch(
                     modifier = Modifier.scale(1.3f),

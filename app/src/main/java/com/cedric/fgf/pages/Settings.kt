@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -48,7 +50,8 @@ object Settings {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -143,10 +146,13 @@ object Settings {
                     },
                     modifier = Modifier.padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
-                ) { Text(text = "Reddit", color = MaterialTheme.colorScheme.onPrimary) }
+                ) { Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(id = R.drawable.reddit_logo),
+                    contentDescription = "Reddit",
+                ) }
 
                 Button(
                     onClick = {
@@ -158,10 +164,13 @@ object Settings {
                     },
                     modifier = Modifier.padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
-                ) { Text(text = "Twitter", color = MaterialTheme.colorScheme.onPrimary) }
+                ) { Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(id = R.drawable.twitter_logo),
+                    contentDescription = "Twitter",
+                ) }
             }
 
             Row(){
@@ -175,10 +184,13 @@ object Settings {
                     },
                     modifier = Modifier.padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
-                ) { Text(text = "YouTube", color = MaterialTheme.colorScheme.onPrimary) }
+                ) { Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(id = R.drawable.youtube_logo),
+                    contentDescription = "YouTube",
+                ) }
 
                 Button(
                     onClick = {
@@ -190,10 +202,13 @@ object Settings {
                     },
                     modifier = Modifier.padding(8.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        containerColor = MaterialTheme.colorScheme.primary
                     )
-                ) { Text(text = "TikTok", color = MaterialTheme.colorScheme.onPrimary) }
+                ) { Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(id = R.drawable.tiktok_logo),
+                    contentDescription = "TikTok",
+                ) }
             }
         }
     }
