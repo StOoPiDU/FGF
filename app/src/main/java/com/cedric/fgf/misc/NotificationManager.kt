@@ -59,7 +59,7 @@ class NotificationHandler : ComponentActivity() {
         }
         Button(onClick = {
             if (hasNotificationPermission) {
-                showNotification(context)
+                showTestNotification(context)
             }
         }, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
         ) {
@@ -68,23 +68,8 @@ class NotificationHandler : ComponentActivity() {
 
     }
 
-    // Is this not calling app level?
-//    private fun createNotificationChannel() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val name = "FGF Posts"
-//            val descriptionText = "New FGF Posts Notifier"
-//            val importance = NotificationManager.IMPORTANCE_HIGH
-//            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-//                description = descriptionText
-//            }
-//            val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//    }
-
-    private fun showNotification(context: Context) {
+    private fun showTestNotification(context: Context) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setSmallIcon(R.drawable.fgf_logo_whiteout)
             .setContentTitle("New FGF Post Is Live (Test)")
             .setContentText("[Steam] (Game) StOoPiD Puzzle Game")

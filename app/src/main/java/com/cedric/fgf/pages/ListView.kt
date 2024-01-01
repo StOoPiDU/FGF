@@ -52,9 +52,12 @@ import coil.compose.rememberAsyncImagePainter
 import com.cedric.fgf.R
 import com.cedric.fgf.database.FavouriteItem
 import com.cedric.fgf.database.FavouritesDatabase
+import com.cedric.fgf.database.LatestDatabase
+import com.cedric.fgf.database.LatestItem
 import com.cedric.fgf.misc.FGFData
 import com.cedric.fgf.misc.RetroFitAPI
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -86,7 +89,7 @@ object ListView {
         val retrofitAPI = retrofit.create(RetroFitAPI::class.java)
         val call: Call<FGFData> = retrofitAPI.getData()
         
-//        val db_li = LatestDatabase.getInstance(ctx)
+        val db_li = LatestDatabase.getInstance(ctx)
 
         call.enqueue(object : Callback<FGFData> {
             override fun onResponse(call: Call<FGFData>, response: Response<FGFData>) {
@@ -105,14 +108,14 @@ object ListView {
                         }
                         onResult(result)
 
-//                        GlobalScope.launch(Dispatchers.IO) {
-//                            // Wiping the DB
-//                            db_li.latestItemDao().deleteAllLatest()
-//                            // Rebuilding the DB with the most recent few items
-//                            result.take(3).forEach { item ->
-//                                db_li.latestItemDao().insert(LatestItem(item.id))
-//                            }
-//                        }
+                        GlobalScope.launch(Dispatchers.IO) {
+                            // Wiping the DB
+                            db_li.latestItemDao().deleteAllLatest()
+                            // Rebuilding the DB with the most recent few items
+                            result.take(10).forEach { item ->
+                                db_li.latestItemDao().insert(LatestItem(item.id))
+                            }
+                        }
                     }
                 }
             }
