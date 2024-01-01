@@ -7,9 +7,9 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.work.Constraints
-import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.cedric.fgf.MainActivity
 import com.cedric.fgf.R
@@ -19,19 +19,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-// THIS WAS WHERE I WAS FUCK I HATE
+// Removing CoroutineWorker for Worker
+// to re-enable CoroutineWorker, change Worker(context, params) to CoroutineWorker(context,params)
+// change doWork() to suspend fun doWork()
+// re-add delay for good measure at the start of the try with delay(20000)
+// add return@context to all the returns.
 
 
-class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result {
-        return withContext(Dispatchers.IO) {
+class UpdateCheckWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
+    override fun doWork(): Result {
             try {
-                // Additional delay to try to help with extra calls.
-                delay(20000)
 
                 val appContext = applicationContext
 
@@ -58,7 +58,7 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
                 if (response.isSuccessful) {
                     val db_li = LatestDatabase.getInstance(appContext)
                     // If the latest item DB is empty this code wont run. Trying to stop extra calls and crashes.
-                    if (db_li.latestItemDao().getAll() == null) { return@withContext Result.failure()}
+                    if (db_li.latestItemDao().getAll() == null) { return Result.failure()}
 
                     val fgfData = response.body()
                     fgfData?.let {
@@ -69,6 +69,9 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
                         var notificationId = (0..1000).random() // This should prob be a static int but I don't want it to be overwritten
 
                         GlobalScope.launch(Dispatchers.IO) {
+                            // Added precaution
+                            delay(20000)
+
                             check.take(3).forEach { check ->
                                 if (db_li.latestItemDao().getLatestItemById(check.id) == null) {
                                     db_li.latestItemDao().insert(LatestItem(check.id))
@@ -92,11 +95,10 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
                         }
                     }
                 }
-                return@withContext Result.success()
+                return Result.success()
             } catch (e: Exception) {
-                return@withContext Result.failure()
+                return Result.failure()
             }
-        }
     }
 }
 
