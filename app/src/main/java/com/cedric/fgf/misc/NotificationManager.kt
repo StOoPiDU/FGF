@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkManager
 import com.cedric.fgf.R
 
 class NotificationHandler : ComponentActivity() {
@@ -38,12 +41,20 @@ class NotificationHandler : ComponentActivity() {
     fun NotificationContent() {
         val context = LocalContext.current
         var hasNotificationPermission by remember {
-            mutableStateOf(
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mutableStateOf(
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                )
+            } else {mutableStateOf(true)}
+        }
+
+        val workManager = WorkManager.getInstance(this)
+
+        var notificationToggle by remember{
+            mutableStateOf(true)
         }
 
         val launcher = rememberLauncherForActivityResult(
@@ -52,11 +63,40 @@ class NotificationHandler : ComponentActivity() {
                 hasNotificationPermission = isGranted
             }
         )
-        Button(onClick = {
-            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)) {
-            Text(text = "Request Permission")
+
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) && !hasNotificationPermission) {
+            Button(
+                onClick = {
+                    launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text(text = "Request Permission")
+            }
         }
+
+        if (hasNotificationPermission) {
+            Button(onClick = {
+                if (notificationToggle) {
+                    notificationToggle = false
+                    workManager.enqueueUniquePeriodicWork(
+                        "updateCheckRequest",
+                        ExistingPeriodicWorkPolicy.UPDATE,
+                        updateCheckRequest)
+                } else {
+                    notificationToggle = true
+                    workManager.cancelAllWork()
+                    workManager.pruneWork()
+                }
+            }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
+            ) {
+                Text(text = if (notificationToggle) "Enable Notifications" else "Disable Notifications")
+            }
+        }
+
         Button(onClick = {
             if (hasNotificationPermission) {
                 showTestNotification(context)

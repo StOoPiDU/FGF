@@ -17,6 +17,7 @@ import com.cedric.fgf.database.LatestDatabase
 import com.cedric.fgf.database.LatestItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -29,6 +30,9 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             try {
+                // Additional delay to try to help with extra calls.
+                delay(20000)
+
                 val appContext = applicationContext
 
                 val intent = Intent(appContext, MainActivity::class.java)
@@ -98,16 +102,6 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
 
 
 // Schedule the worker to run periodically
-
-//val constraints = Constraints.Builder()
-//    .setRequiredNetworkType(NetworkType.CONNECTED)
-//    .build()
-
-//val updateCheckRequest = PeriodicWorkRequestBuilder<UpdateCheckWorker>(5, TimeUnit.MINUTES)
-//    .setConstraints(constraints)
-//    .setInitialDelay(1, TimeUnit.MINUTES)
-//    .build()
-
 val updateCheckRequest = PeriodicWorkRequestBuilder<UpdateCheckWorker>(5, TimeUnit.MINUTES)
     .setConstraints(Constraints(NetworkType.CONNECTED))
     .setInitialDelay(1, TimeUnit.MINUTES)

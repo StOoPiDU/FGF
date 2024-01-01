@@ -17,12 +17,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.WorkManager
 import com.cedric.fgf.database.FavouritesDatabase
 import com.cedric.fgf.database.LatestDatabase
 import com.cedric.fgf.misc.BottomNavBar
-import com.cedric.fgf.misc.updateCheckRequest
 import com.cedric.fgf.pages.Favourites
 import com.cedric.fgf.pages.ListView
 import com.cedric.fgf.pages.Settings
@@ -36,14 +33,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val workManager = WorkManager.getInstance(this)
-        // Cancelled the extra workers I wasn't accounting for.
-//        workManager.cancelAllWork()
-//        workManager.pruneWork()
-        workManager.enqueueUniquePeriodicWork(
-            "updateCheckRequest",
-            ExistingPeriodicWorkPolicy.UPDATE,
-            updateCheckRequest)
+//        val workManager = WorkManager.getInstance(this)
+//        // Cancelled the extra workers I wasn't accounting for.
+////        workManager.cancelAllWork()
+////        workManager.pruneWork()
+//        workManager.enqueueUniquePeriodicWork(
+//            "updateCheckRequest",
+//            ExistingPeriodicWorkPolicy.UPDATE,
+//            updateCheckRequest)
 
 //        createNotificationChannel()
 
