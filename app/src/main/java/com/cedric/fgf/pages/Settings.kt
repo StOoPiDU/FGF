@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cedric.fgf.database.FavouritesDatabase
@@ -24,8 +25,6 @@ import kotlinx.coroutines.withContext
 object Settings {
     // This might be better called an "About" page.
     // Use this object to describe what FGF is,
-    // explain how to use filters (once implemented),
-    // toggle push notifications (once implemented),
     // and possibly just link to the FGF links ala linktree.
     @Composable
     fun SettingsScreen() {
@@ -37,11 +36,12 @@ object Settings {
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text("Welcome to the FGF Mobile Application!",
-                textAlign = TextAlign.Center,)
-
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface)
             // Calling the Notification buttons and the logic from it
             NotificationHandler().NotificationContent()
 
@@ -52,7 +52,7 @@ object Settings {
                         db.favouriteItemDao().deleteAll()
                     }
                 }
-            }, colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
+            }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
             ) {
                 Text("Delete All Favourites")
             }

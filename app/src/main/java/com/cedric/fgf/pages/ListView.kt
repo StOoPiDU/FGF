@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -174,7 +175,7 @@ object ListView {
                     Image(
                         modifier = Modifier
                             .size(100.dp)
-                            .background(color = Color.Blue),
+                            .background(color = MaterialTheme.colorScheme.primary),
                         painter = getImage(item),
                         contentDescription = item.title + " thumbnail",
                         contentScale = ContentScale.FillHeight,)
@@ -184,8 +185,8 @@ object ListView {
 //                modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
-                        Text(text = "/u/" + item.author)
+                        Text(text = shortenContent(item.title), textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                        Text(text = "/u/" + item.author, color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
                 Divider()
@@ -207,22 +208,22 @@ object ListView {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
-            // ^ can try something like 0.9f for an argument, this is nice though
+                .fillMaxHeight(),
+            backgroundColor = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 if (!hasImage(item)) {
                     Image(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1.5f),
-//                        .background(color = Color.Blue),
+//                        .background(color = MaterialTheme.colorScheme.primary),
                         painter = getImage(item),
                         contentDescription = item.title + " thumbnail",
                         contentScale = ContentScale.Fit
@@ -232,23 +233,24 @@ object ListView {
                     text = item.title,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
-                Text(text = "Posted by /u/" + "${item.author}", fontStyle = FontStyle.Italic)
+                Text(text = "Posted by /u/" + "${item.author}", fontStyle = FontStyle.Italic, color = MaterialTheme.colorScheme.onSurface)
 
                 Row() {
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://redd.it/" + item.id))
                             context.startActivity(intent)},
                         modifier = Modifier.padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
-                    ) { Text(text = "Reddit Link") }
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
+                    ) { Text(text = "Reddit Link", color = MaterialTheme.colorScheme.onPrimary) }
                     Button(
                         onClick = {val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
                                 context.startActivity(intent)},
                         modifier = Modifier.padding(8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
-                    ) { Text(text = "Direct Link") }
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
+                    ) { Text(text = "Direct Link", color = MaterialTheme.colorScheme.onPrimary) }
                 }
 
                 // Saving a post item to the local favourites database
@@ -279,7 +281,7 @@ object ListView {
 //                        imageVector = if (isItemInDb) Icons.Outlined.Favorite else Icons.Default.Favorite,
                         imageVector = Icons.Default.Favorite,
                         contentDescription = "Favorite",
-                        tint = if (isItemInDb) Color.Red else Color.Black
+                        tint = if (isItemInDb) Color.Red else MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -308,8 +310,8 @@ object ListView {
                 Button(
                     onClick = onClose,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue, contentColor = Color.White)
-                ) { Text(text = "Close") }
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary)
+                ) { Text(text = "Close",color = MaterialTheme.colorScheme.onPrimary) }
             }
         }
     }
