@@ -81,7 +81,9 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                    ) {
+                    ) { innerPadding -> Box(modifier = Modifier.padding(
+                            PaddingValues(bottom = innerPadding.calculateBottomPadding())
+                        )) {
                         NavHost(
                             navController = navController,
                             startDestination = BottomNavBar.Home.route
@@ -96,6 +98,7 @@ class MainActivity : ComponentActivity() {
                                 Settings.SettingsScreen()
                             }
                         }
+                    }
                     }
                 }
             }

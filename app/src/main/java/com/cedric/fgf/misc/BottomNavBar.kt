@@ -20,7 +20,7 @@ sealed class BottomNavBar(
     object Favourites : BottomNavBar(
         route = "FAVOURITES",
         title = "Favourites",
-        icon = Icons.Default.Favorite // Use this icon exactly for the "ExpandedListView"
+        icon = Icons.Default.Favorite
     )
 
     object Settings : BottomNavBar(
