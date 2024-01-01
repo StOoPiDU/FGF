@@ -6,5 +6,6 @@ import retrofit2.http.GET
 
 interface RetroFitAPI {
     @GET("FreeGameFindings/new/.json")
+//    @GET("nauttestforfgf/new/.json")
     fun getData(): Call<FGFData>
 }
