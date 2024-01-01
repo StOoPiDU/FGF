@@ -70,7 +70,7 @@ object Settings {
             )
 
             Text(
-                "FreeGameFindings is a group where users share their free video game promotion finds. You can view this reformatted list of the  latest posts to FGF and use the buttons available to check out the posts on your device.",
+                "FreeGameFindings is a group where users share their free video game promotion finds. You can view this reformatted list of the latest posts to FGF on Reddit and use the buttons available to check out the posts on your device.",
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface
             )
